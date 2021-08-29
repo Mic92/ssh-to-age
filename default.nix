@@ -1,16 +1,18 @@
 { pkgs ? import <nixpkgs> {} }:
 pkgs.buildGoModule {
   pname = "ssh-to-age";
-  version = "1.0.2";
+  version = "1.0.0";
 
   src = ./.;
 
-  vendorSha256 = "sha256-n0xQKRIFOZyK7F2JibpwworTe5gx2XfOCMupCwQhXZg=";
+  vendorSha256 = "sha256-jiFPcdWnAk54RJv4mHB3A+5tqKzqitfsiRXYZLa3Gu0=";
 
   nativeBuildInputs = [ pkgs.golangci-lint ];
 
   checkPhase = ''
-    HOME=$TMPDIR go test .
+    runHook preCheck
+    go test ./...
+    runHook postCheck
   '';
 
   shellHook = ''
