@@ -82,7 +82,7 @@ func convertKeys(args []string) error {
 			key, err := sshage.SSHPublicKeyToAge([]byte(k))
 			if err != nil {
 				if errors.Is(err, sshage.UnsupportedKeyType) {
-					// silently ignore unsupported key types to make it ssh-keyscan friendly
+					fmt.Fprintf(os.Stderr, "skipped key: %s\n", err)
 					continue
 				}
 				return fmt.Errorf("failed to convert '%s': %w", k, err)

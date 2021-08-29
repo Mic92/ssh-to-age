@@ -74,7 +74,7 @@ func SSHPublicKeyToAge(sshKey []byte) (*string, error) {
 	}
 	// We only care about ed25519
 	if pk.Type() != ssh.KeyAlgoED25519 {
-		return nil, fmt.Errorf("got %s key type but: %w", pk.Type(), UnsupportedKeyType)
+		return nil, fmt.Errorf("got %s key type, but %w", pk.Type(), UnsupportedKeyType)
 	}
 	// Get the bytes
 	cpk, ok := pk.(ssh.CryptoPublicKey)
