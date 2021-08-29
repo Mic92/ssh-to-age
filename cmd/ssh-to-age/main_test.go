@@ -42,7 +42,7 @@ func TestPublicKey(t *testing.T) {
 	defer os.RemoveAll(tempdir)
 	out := path.Join(tempdir, "out")
 
-	err := convertKeys([]string{"ssh-to-pgp", "-i", Asset("id_ed25519.pub"), "-o", out})
+	err := convertKeys([]string{"ssh-to-age", "-i", Asset("id_ed25519.pub"), "-o", out})
 	ok(t, err)
 
 	rawPublicKey, err := ioutil.ReadFile(out)
@@ -59,7 +59,7 @@ func TestSshKeyScan(t *testing.T) {
 	defer os.RemoveAll(tempdir)
 	out := path.Join(tempdir, "out")
 
-	err := convertKeys([]string{"ssh-to-pgp", "-i", Asset("keyscan.txt"), "-o", out})
+	err := convertKeys([]string{"ssh-to-age", "-i", Asset("keyscan.txt"), "-o", out})
 	ok(t, err)
 
 	file, err := os.Open(out)
@@ -81,7 +81,7 @@ func TestPrivateKey(t *testing.T) {
 	defer os.RemoveAll(tempdir)
 	out := path.Join(tempdir, "out")
 
-	err := convertKeys([]string{"ssh-to-pgp", "-private-key", "-i", Asset("id_ed25519"), "-o", out})
+	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519"), "-o", out})
 	ok(t, err)
 
 	rawPrivateKey, err := ioutil.ReadFile(out)
