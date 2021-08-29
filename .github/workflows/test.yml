@@ -1,0 +1,30 @@
+name: "Test"
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+  schedule:
+    - cron:  '51 2 * * *'
+jobs:
+  cross-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v13
+    - run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz --pure -p gox -p go --run "gox -osarch '!darwin/386' ."
+  tests:
+    strategy:
+      matrix:
+        nixPath:
+          - nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-21.05.tar.gz
+          - nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz
+        os: [ ubuntu-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v13
+      with:
+        nix_path: "${{ matrix.nixPath }}"
+    - name: Build nix packages
+      run: nix-build --no-out-link
