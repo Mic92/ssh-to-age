@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> {} }:
 pkgs.buildGoModule {
   pname = "ssh-to-age";
-  version = "1.0.0";
+  version = "1.0.1";
 
   src = ./.;
 
