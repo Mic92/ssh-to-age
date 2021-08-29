@@ -23,8 +23,12 @@ age17044m9wgakla6pzftf4srtl3h5mcsr85jysgt5fg23zpnta8sfdqhzn452
 
 ssh-to-age also supports multiple public keys at once seperated by newlines and ignores unless ssh keys that are not in the ed25519 format. This makes it suiteable in combination with `ssh-keyscan`:
 
-```
-ssh-keyscan eve.thalheim.io eva.thalheim.io | ssh-to-age
+```console
+$ ssh-keyscan eve.thalheim.io eva.thalheim.io | ssh-to-age
+# eve.thalheim.io:22 SSH-2.0-OpenSSH_8.6
+...
+age1hjm3aujg9e79f5yth8a2cejzdjg5n9vnu96l05p70uvfpeltnpms7yy3pp
+age1v8zjc47jmlqwefyu66s0d4ke98qr4vnuj3cpvs4z9npfdw833dxqwjrhzv
 ```
 
 ## Install with nix
