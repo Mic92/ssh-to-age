@@ -14,11 +14,9 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-type UnsupportedKeyType struct{}
-
-func (UnsupportedKeyType) Error() string {
-	return "only ed25519 keys are supported"
-}
+var (
+	UnsupportedKeyType = errors.New("only ed25519 keys are supported")
+)
 
 func ed25519PrivateKeyToCurve25519(pk ed25519.PrivateKey) ([]byte, error) {
 	h := sha512.New()
@@ -43,12 +41,12 @@ func ed25519PublicKeyToCurve25519(pk ed25519.PublicKey) ([]byte, error) {
 func SSHPrivateKeyToAge(sshKey []byte) (*string, error) {
 	privateKey, err := ssh.ParseRawPrivateKey(sshKey)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse ssh private key: %v", err)
+		return nil, fmt.Errorf("failed to parse ssh private key: %w", err)
 	}
 
 	ed25519Key, ok := privateKey.(*ed25519.PrivateKey)
 	if !ok {
-		return nil, fmt.Errorf("got %s key type but: %v", reflect.TypeOf(privateKey), UnsupportedKeyType {})
+		return nil, fmt.Errorf("got %s key type but: %w", reflect.TypeOf(privateKey), UnsupportedKeyType)
 	}
 	bytes, err := ed25519PrivateKeyToCurve25519(*ed25519Key)
 	if err != nil {
@@ -72,11 +70,11 @@ func SSHPublicKeyToAge(sshKey []byte) (*string, error) {
 		_, _, pk, _, _, err = ssh.ParseKnownHosts(sshKey)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse ssh public key: %v", err)
+		return nil, fmt.Errorf("failed to parse ssh public key: %w", err)
 	}
 	// We only care about ed25519
 	if pk.Type() != ssh.KeyAlgoED25519 {
-		return nil, fmt.Errorf("got %s key type but: %v", pk.Type(), UnsupportedKeyType {})
+		return nil, fmt.Errorf("got %s key type but: %w", pk.Type(), UnsupportedKeyType)
 	}
 	// Get the bytes
 	cpk, ok := pk.(ssh.CryptoPublicKey)
@@ -90,12 +88,12 @@ func SSHPublicKeyToAge(sshKey []byte) (*string, error) {
 	// Convert the key to curve ed25519
 	mpk, err := ed25519PublicKeyToCurve25519(epk)
 	if err != nil {
-		return nil, fmt.Errorf("cannot convert ed25519 public key to curve25519: %v", err)
+		return nil, fmt.Errorf("cannot convert ed25519 public key to curve25519: %w", err)
 	}
 	// Encode the key
 	s, err := bech32.Encode("age", mpk)
 	if err != nil {
-		return nil, fmt.Errorf("cannot encode key as bech32: %v", err)
+		return nil, fmt.Errorf("cannot encode key as bech32: %w", err)
 	}
 	return &s, nil
 }

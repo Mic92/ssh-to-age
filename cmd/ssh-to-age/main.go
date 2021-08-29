@@ -4,7 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	sshage "github/Mic92/ssh-to-age"
+	sshage "github.com/Mic92/ssh-to-age"
 	"io"
 	"io/ioutil"
 	"os"
@@ -30,23 +30,13 @@ func parseFlags(args []string) options {
 	return opts
 }
 
-//func main() {
-//	if len(os.Args) != 1 {
-//		println("Usage: " + os.Args[0])
-//		println("Pipe a SSH public key or the output of ssh-keyscan into it")
-//		os.Exit(1)
-//	}
-//
-//	scanner := bufio.NewScanner(os.Stdin)
-//	for scanner.Scan() {
-//		text := scanner.Text() + "\n"
-//		var err error
-//		fmt.Println(s)
-//	}
-//	if err := scanner.Err(); err != nil {
-//		panic(err)
-//	}
-//}
+func writeKey(writer io.Writer, key *string) error {
+	if _, err := writer.Write([]byte(*key)); err != nil {
+		return err
+	}
+	_, err := writer.Write([]byte("\n"))
+	return err
+}
 
 func convertKeys(args []string) error {
 	opts := parseFlags(args)
@@ -67,7 +57,7 @@ func convertKeys(args []string) error {
 
 	writer := io.WriteCloser(os.Stdout)
 	if opts.out != "-" {
-		writer, err := os.Create(opts.out)
+		writer, err = os.Create(opts.out)
 		if err != nil {
 			return fmt.Errorf("failed to create %s: %w", opts.out, err)
 		}
@@ -77,24 +67,28 @@ func convertKeys(args []string) error {
 	if opts.privateKey {
 		key, err := sshage.SSHPrivateKeyToAge(sshKey)
 		if err != nil {
-			return fmt.Errorf("failed to convert '%s': %v", sshKey, err)
+			return fmt.Errorf("failed to convert '%s': %w", sshKey, err)
 		}
-		if _, err := writer.Write(key); err != nil {
-			return fmt.Errorf("failed to write key: %v", err)
+		if err := writeKey(writer, key); err != nil {
+			return fmt.Errorf("failed to write key: %w", err)
 		}
 	} else {
 		keys := strings.Split(string(sshKey), "\n")
 		for _, k := range keys {
-			key, err := sshage.SSHPrivateKeyToAge([]byte(k))
+			// skip empty lines
+			if len(k) == 0 {
+				continue
+			}
+			key, err := sshage.SSHPublicKeyToAge([]byte(k))
 			if err != nil {
 				if errors.Is(err, sshage.UnsupportedKeyType) {
 					// silently ignore unsupported key types to make it ssh-keyscan friendly
 					continue
 				}
-				return fmt.Errorf("failed to convert '%s': %v", k, err)
+				return fmt.Errorf("failed to convert '%s': %w", k, err)
 			}
-			if _, err := writer.Write(key); err != nil {
-				return fmt.Errorf("failed to write key: %v", err)
+			if err := writeKey(writer, key); err != nil {
+				return fmt.Errorf("failed to write key: %w", err)
 			}
 		}
 	}
