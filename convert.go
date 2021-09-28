@@ -3,6 +3,7 @@ package agessh
 import (
 	"crypto/ed25519"
 	"crypto/sha512"
+	"crypto"
 	"errors"
 	"fmt"
 	"reflect"
@@ -38,28 +39,52 @@ func ed25519PublicKeyToCurve25519(pk ed25519.PublicKey) ([]byte, error) {
 	return p.BytesMontgomery(), nil
 }
 
-func SSHPrivateKeyToAge(sshKey []byte) (*string, error) {
+func encodePublicKey(key crypto.PublicKey) (*string, error) {
+	epk, ok := key.(ed25519.PublicKey)
+	if !ok {
+		return nil, fmt.Errorf("BUG! public key is not of type ed25519.PublicKey: %s", reflect.TypeOf(key))
+	}
+	// Convert the key to curve ed25519
+	mpk, err := ed25519PublicKeyToCurve25519(epk)
+	if err != nil {
+		return nil, fmt.Errorf("cannot convert ed25519 public key to curve25519: %w", err)
+	}
+	// Encode the key
+	s, err := bech32.Encode("age", mpk)
+	if err != nil {
+		return nil, fmt.Errorf("cannot encode key as bech32: %w", err)
+	}
+	return &s, nil
+}
+
+func SSHPrivateKeyToAge(sshKey []byte) (*string, *string, error) {
 	privateKey, err := ssh.ParseRawPrivateKey(sshKey)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse ssh private key: %w", err)
+		return nil, nil, fmt.Errorf("failed to parse ssh private key: %w", err)
 	}
 
 	ed25519Key, ok := privateKey.(*ed25519.PrivateKey)
 	if !ok {
-		return nil, fmt.Errorf("got %s key type but: %w", reflect.TypeOf(privateKey), UnsupportedKeyType)
+		return nil, nil, fmt.Errorf("got %s key type but: %w", reflect.TypeOf(privateKey), UnsupportedKeyType)
+	}
+
+	pubKey, err := encodePublicKey(ed25519Key.Public())
+	if err != nil {
+		return nil, nil, err
 	}
 	bytes, err := ed25519PrivateKeyToCurve25519(*ed25519Key)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	s, err := bech32.Encode("AGE-SECRET-KEY-", bytes)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	s = strings.ToUpper(s)
-	return &s, nil
+	return &s, pubKey, nil
 }
+
 
 func SSHPublicKeyToAge(sshKey []byte) (*string, error) {
 	var err error
@@ -81,19 +106,5 @@ func SSHPublicKeyToAge(sshKey []byte) (*string, error) {
 	if !ok {
 		return nil, errors.New("BUG! public key does not implement ssh.CryptoPublicKey")
 	}
-	epk, ok := cpk.CryptoPublicKey().(ed25519.PublicKey)
-	if !ok {
-		return nil, errors.New("BUG! public key is not of type ed25519.PublicKey")
-	}
-	// Convert the key to curve ed25519
-	mpk, err := ed25519PublicKeyToCurve25519(epk)
-	if err != nil {
-		return nil, fmt.Errorf("cannot convert ed25519 public key to curve25519: %w", err)
-	}
-	// Encode the key
-	s, err := bech32.Encode("age", mpk)
-	if err != nil {
-		return nil, fmt.Errorf("cannot encode key as bech32: %w", err)
-	}
-	return &s, nil
+	return encodePublicKey(cpk.CryptoPublicKey())
 }

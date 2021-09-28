@@ -65,7 +65,7 @@ func convertKeys(args []string) error {
 	}
 
 	if opts.privateKey {
-		key, err := sshage.SSHPrivateKeyToAge(sshKey)
+		key, _, err := sshage.SSHPrivateKeyToAge(sshKey)
 		if err != nil {
 			return fmt.Errorf("failed to convert '%s': %w", sshKey, err)
 		}
