@@ -5,7 +5,7 @@ pkgs.buildGoModule {
 
   src = ./.;
 
-  vendorSha256 = "sha256-GMUUyCA6jgCi9DcKfpkaXl84hp5r6o8XZ/e36TLvBLU=";
+  vendorSha256 = "sha256-Xi5aJAYgbtrDq7KBAfZR1LT5/jbslwEa70qaFqW4vcQ=";
 
   nativeBuildInputs = [ pkgs.golangci-lint ];
 
