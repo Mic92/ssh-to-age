@@ -7,7 +7,8 @@ pkgs.buildGoModule {
 
   vendorSha256 = "sha256-Xi5aJAYgbtrDq7KBAfZR1LT5/jbslwEa70qaFqW4vcQ=";
 
-  nativeBuildInputs = [ pkgs.golangci-lint ];
+  # golangci-lint is marked as broken on macOS
+  nativeBuildInputs = pkgs.lib.optional (!pkgs.stdenv.isDarwin) [ pkgs.golangci-lint ];
 
   checkPhase = ''
     runHook preCheck
