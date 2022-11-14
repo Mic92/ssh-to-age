@@ -1,6 +1,6 @@
 module github.com/Mic92/ssh-to-age
 
-go 1.16
+go 1.18 // tagx:compat 1.16
 
 require (
 	filippo.io/age v1.0.0
