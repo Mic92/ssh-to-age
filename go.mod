@@ -7,3 +7,5 @@ require (
 	filippo.io/edwards25519 v1.0.0
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 )
+
+require golang.org/x/sys v0.0.0-20210903071746-97244b99971b // indirect
