@@ -12,8 +12,8 @@ import (
 )
 
 type options struct {
-	out, in    string
-	privateKey bool
+	out, in, passphrase string
+	privateKey          bool
 }
 
 func parseFlags(args []string) options {
@@ -22,6 +22,7 @@ func parseFlags(args []string) options {
 	f.BoolVar(&opts.privateKey, "private-key", false, "convert private key instead of public key")
 	f.StringVar(&opts.in, "i", "-", "Input path. Reads by default from standard output")
 	f.StringVar(&opts.out, "o", "-", "Output path. Prints by default to standard output")
+	f.StringVar(&opts.passphrase, "passphrase", "", "Output path. Prints by default to standard output")
 	if err := f.Parse(args[1:]); err != nil {
 		// should never happen since flag.ExitOnError
 		panic(err)
@@ -63,9 +64,12 @@ func convertKeys(args []string) error {
 		}
 		defer writer.Close()
 	}
-
 	if opts.privateKey {
-		key, _, err := sshage.SSHPrivateKeyToAge(sshKey)
+		var (
+			key *string
+			err error
+		)
+		key, _, err = sshage.SSHPrivateKeyToAge(sshKey, []byte(opts.passphrase))
 		if err != nil {
 			return fmt.Errorf("failed to convert '%s': %w", sshKey, err)
 		}

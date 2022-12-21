@@ -1,9 +1,9 @@
 package agessh
 
 import (
+	"crypto"
 	"crypto/ed25519"
 	"crypto/sha512"
-	"crypto"
 	"errors"
 	"fmt"
 	"reflect"
@@ -57,8 +57,16 @@ func encodePublicKey(key crypto.PublicKey) (*string, error) {
 	return &s, nil
 }
 
-func SSHPrivateKeyToAge(sshKey []byte) (*string, *string, error) {
-	privateKey, err := ssh.ParseRawPrivateKey(sshKey)
+func SSHPrivateKeyToAge(sshKey, passphrase []byte) (*string, *string, error) {
+	var (
+		privateKey interface{}
+		err        error
+	)
+	if len(passphrase) > 0 {
+		privateKey, err = ssh.ParseRawPrivateKeyWithPassphrase(sshKey, passphrase)
+	} else {
+		privateKey, err = ssh.ParseRawPrivateKey(sshKey)
+	}
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to parse ssh private key: %w", err)
 	}
@@ -84,7 +92,6 @@ func SSHPrivateKeyToAge(sshKey []byte) (*string, *string, error) {
 	s = strings.ToUpper(s)
 	return &s, pubKey, nil
 }
-
 
 func SSHPublicKeyToAge(sshKey []byte) (*string, error) {
 	var err error
