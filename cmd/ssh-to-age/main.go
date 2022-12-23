@@ -4,16 +4,17 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	sshage "github.com/Mic92/ssh-to-age"
 	"io"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	sshage "github.com/Mic92/ssh-to-age"
 )
 
 type options struct {
-	out, in                string
-	privateKey, passphrase bool
+	out, in    string
+	privateKey bool
 }
 
 func parseFlags(args []string) options {
@@ -22,7 +23,6 @@ func parseFlags(args []string) options {
 	f.BoolVar(&opts.privateKey, "private-key", false, "convert private key instead of public key")
 	f.StringVar(&opts.in, "i", "-", "Input path. Reads by default from standard output")
 	f.StringVar(&opts.out, "o", "-", "Output path. Prints by default to standard output")
-	f.BoolVar(&opts.passphrase, "passphrase", false, "Indicate private key passphrase should be read from `SSH_TO_AGE_PASSPHRASE` environment variable")
 	if err := f.Parse(args[1:]); err != nil {
 		// should never happen since flag.ExitOnError
 		panic(err)

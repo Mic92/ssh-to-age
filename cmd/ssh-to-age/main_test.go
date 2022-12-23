@@ -103,7 +103,7 @@ func TestPrivateKeyWithPassphrase(t *testing.T) {
 	os.Setenv("SSH_TO_AGE_PASSPHRASE", passphrase)
 	defer os.Unsetenv("SSH_TO_AGE_PASSPHRASE")
 
-	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519_passphrase"), "-passphrase", "-o", out})
+	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519_passphrase"), "-o", out})
 	ok(t, err)
 
 	rawPrivateKey, err := ioutil.ReadFile(out)
