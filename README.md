@@ -13,6 +13,13 @@ $ cat key.txt
  AGE-SECRET-KEY-1K3VN4N03PTHJWSJSCCMQCN33RY5FSKQPJ4KRRTG3JMQUYE0TUSEQEDH6V8
 ```
 
+If you private key is encrypted, you can export the password in `SSH_TO_AGE_PASSPHRASE`
+
+``` console
+$ read -s SSH_TO_AGE_PASSPHRASE; export SSH_TO_AGE_PASSPHRASE
+$ ssh-to-age -private-key -i $HOME/.ssh/id_ed25519 -o key.txt
+```
+
 - Exports the public key:
 
 ```console
