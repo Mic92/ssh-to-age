@@ -64,15 +64,15 @@ func TestSshKeyScan(t *testing.T) {
 
 	file, err := os.Open(out)
 	ok(t, err)
-    defer file.Close()
+	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-    for scanner.Scan() {
+	for scanner.Scan() {
 		pubKey := strings.TrimSuffix(scanner.Text(), "\n")
 		fmt.Printf("scanned key: %s\n", pubKey)
 		_, err = age.ParseX25519Recipient(pubKey)
 		ok(t, err)
-    }
+	}
 	ok(t, scanner.Err())
 }
 
@@ -82,6 +82,28 @@ func TestPrivateKey(t *testing.T) {
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519"), "-o", out})
+	ok(t, err)
+
+	rawPrivateKey, err := ioutil.ReadFile(out)
+	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
+	ok(t, err)
+
+	fmt.Printf("private key: %s\n", privateKey)
+	_, err = age.ParseX25519Identity(privateKey)
+	ok(t, err)
+}
+
+func TestPrivateKeyWithPassphrase(t *testing.T) {
+	tempdir := TempDir(t)
+	defer os.RemoveAll(tempdir)
+	out := path.Join(tempdir, "out")
+
+	passphrase := "test"
+
+	os.Setenv("SSH_TO_AGE_PASSPHRASE", passphrase)
+	defer os.Unsetenv("SSH_TO_AGE_PASSPHRASE")
+
+	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519_passphrase"), "-o", out})
 	ok(t, err)
 
 	rawPrivateKey, err := ioutil.ReadFile(out)

@@ -4,11 +4,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	sshage "github.com/Mic92/ssh-to-age"
 	"io"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	sshage "github.com/Mic92/ssh-to-age"
 )
 
 type options struct {
@@ -63,9 +64,15 @@ func convertKeys(args []string) error {
 		}
 		defer writer.Close()
 	}
-
 	if opts.privateKey {
-		key, _, err := sshage.SSHPrivateKeyToAge(sshKey)
+		var (
+			key *string
+			err error
+		)
+
+		keyPassphrase := os.Getenv("SSH_TO_AGE_PASSPHRASE")
+
+		key, _, err = sshage.SSHPrivateKeyToAge(sshKey, []byte(keyPassphrase))
 		if err != nil {
 			return fmt.Errorf("failed to convert '%s': %w", sshKey, err)
 		}
