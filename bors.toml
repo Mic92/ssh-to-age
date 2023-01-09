@@ -1,0 +1,9 @@
+
+cut_body_after = "" # don't include text from the PR body in the merge commit message
+status = [
+  "tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-22.11.tar.gz, macos-latest)",
+  "tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz, macos-latest)",
+  "tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-22.11.tar.gz, ubuntu-latest)",
+  "cross-build",
+  "tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz, ubuntu-latest)"
+]
