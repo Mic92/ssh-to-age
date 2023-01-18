@@ -21,7 +21,7 @@ func parseFlags(args []string) options {
 	var opts options
 	f := flag.NewFlagSet(args[0], flag.ExitOnError)
 	f.BoolVar(&opts.privateKey, "private-key", false, "convert private key instead of public key")
-	f.StringVar(&opts.in, "i", "-", "Input path. Reads by default from standard output")
+	f.StringVar(&opts.in, "i", "-", "Input path. Reads by default from standard input")
 	f.StringVar(&opts.out, "o", "-", "Output path. Prints by default to standard output")
 	if err := f.Parse(args[1:]); err != nil {
 		// should never happen since flag.ExitOnError
