@@ -5,7 +5,7 @@ pkgs.buildGoModule {
 
   src = ./.;
 
-  vendorSha256 = "sha256-d4/KNzmmhpdUjdfrjaZ7c2Ba0OjYTtWwxe+MuTkN8Fw=";
+  vendorSha256 = "sha256-qtjjrvvRVcrJIM+EPWTd6xFgIbKvEqkiT3vjXakoQp0=";
 
   # golangci-lint is marked as broken on macOS
   nativeBuildInputs = pkgs.lib.optional (!pkgs.stdenv.isDarwin) [ pkgs.golangci-lint ];
