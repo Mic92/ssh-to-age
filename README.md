@@ -47,5 +47,5 @@ $ nix-shell -p 'import (fetchTarball "https://github.com/Mic92/ssh-to-age/archiv
 ## Install with go
 
 ```console
-$ go get github.com/Mic92/ssh-to-age/cmd
+$ go install github.com/Mic92/ssh-to-age/cmd/ssh-to-age@latest
 ```
