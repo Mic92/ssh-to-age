@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: cachix/install-nix-action@v21
+    - uses: cachix/install-nix-action@v22
     - run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz --pure -p gox -p go --run "gox -osarch '!darwin/386' ."
   tests:
     strategy:
@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - uses: cachix/install-nix-action@v21
+    - uses: cachix/install-nix-action@v22
       with:
         nix_path: "${{ matrix.nixPath }}"
     - name: Build nix packages
