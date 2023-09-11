@@ -1,7 +1,6 @@
 queue_rules:
   - name: default
     merge_conditions:
-      - check-success=cross-build
       - check-success=tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-23.05.tar.gz,
         macos-latest)
       - check-success=tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-23.05.tar.gz,
