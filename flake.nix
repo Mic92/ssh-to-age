@@ -14,6 +14,13 @@
           ssh-to-age = (pkgs.callPackage ./default.nix {});
           default = config.packages.ssh-to-age;
         };
+        checks = {
+          cross-build = pkgs.runCommand "cross-build" { nativeBuildInputs = [ pkgs.gox ]; } ''
+            cp -r ${./.} .
+            chmod -R u+w .
+            gox -osarch '!darwin/386' .
+          '';
+        };
       };
     });
 }
