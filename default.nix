@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {}, vendorHash ? "sha256-MXLFtWq/a0JhFwogfySm811j+5z0u4RX26TR9ZjIkz4=" }:
+{ pkgs ? import <nixpkgs> {}, vendorHash ? "sha256-rSt8uGzyOcGlz7yxhfKnDnsQM5kMRBSHUOU3LOUkuDU=" }:
 pkgs.buildGoModule {
   pname = "ssh-to-age";
   version = "1.1.6";
