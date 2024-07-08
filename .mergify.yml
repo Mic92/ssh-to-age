@@ -1,19 +1,11 @@
 queue_rules:
   - name: default
     merge_conditions:
-      - check-success=tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-23.05.tar.gz,
-        macos-latest)
-      - check-success=tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-23.05.tar.gz,
-        ubuntu-latest)
-      - check-success=tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz,
-        macos-latest)
-      - check-success=tests (nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz,
-        ubuntu-latest)
+      - check-success=buildbot/nix-eval
 defaults:
   actions:
     queue:
-      allow_merging_configuration_change: true
-      method: rebase
+      merge_method: rebase
 pull_request_rules:
   - name: merge using the merge queue
     conditions:
