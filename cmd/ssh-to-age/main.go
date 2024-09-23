@@ -82,10 +82,11 @@ func convertKeys(args []string) error {
 	} else {
 		keys := strings.Split(string(sshKey), "\n")
 		for _, k := range keys {
-			// skip empty lines
-			if len(k) == 0 {
+			// skip empty lines or comments
+			if len(k) == 0 || strings.HasPrefix(k, "#") {
 				continue
 			}
+
 			key, err := sshage.SSHPublicKeyToAge([]byte(k))
 			if err != nil {
 				if errors.Is(err, sshage.UnsupportedKeyType) {
