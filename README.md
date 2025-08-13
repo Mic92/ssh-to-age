@@ -49,3 +49,9 @@ $ nix-shell -p 'import (fetchTarball "https://github.com/Mic92/ssh-to-age/archiv
 ```console
 $ go install github.com/Mic92/ssh-to-age/cmd/ssh-to-age@latest
 ```
+
+## Use a released binary
+
+Tagged releases are built with [GoReleaser](https://goreleaser.com/) and a GitHub Actions workflow following this [post](https://gitgist.com/posts/goreleaser-and-github-actions/).
+
+These are offered on a best-effort basis. (Aside from automated unit tests and the occasional spot check, these are not tested or supported.)
