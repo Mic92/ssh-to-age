@@ -1,3 +1,4 @@
+name: Cross-compile and release binaries
 on:
   workflow_dispatch:
   push:
