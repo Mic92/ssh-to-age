@@ -5,9 +5,9 @@ name: Go build and test
 
 on:
   push:
-    branches: [ "joseph-long-go-ci" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "joseph-long-go-ci" ]
+    branches: [ "main" ]
 
 jobs:
 
