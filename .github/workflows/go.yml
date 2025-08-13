@@ -5,9 +5,9 @@ name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "joseph-long-go-ci" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "joseph-long-go-ci" ]
 
 jobs:
 
