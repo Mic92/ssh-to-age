@@ -1,11 +1,25 @@
 { pkgs ? import <nixpkgs> {}, vendorHash ? "sha256-4R+44AM0zS6WyKWfg0TH5OxmrC1c4xN0MSBgaZrWPX4=" }:
+let
+  fs = pkgs.lib.fileset;
+in
 pkgs.buildGoModule {
   pname = "ssh-to-age";
   version = "1.1.11";
 
-  src = ./.;
+  src = fs.toSource {
+    root = ./.;
+    fileset = fs.unions [
+      ./go.mod
+      ./go.sum
+      ./cmd
+      ./bech32
+      ./convert.go
+    ];
+  };
 
   inherit vendorHash;
+
+  subPackages = [ "cmd/ssh-to-age" ];
 
   # golangci-lint is marked as broken on macOS
   nativeBuildInputs = pkgs.lib.optional (!pkgs.stdenv.isDarwin) [ pkgs.golangci-lint ];
