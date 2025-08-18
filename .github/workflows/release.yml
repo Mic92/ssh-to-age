@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            substituters = https://cache.nixos.org https://cache.thalheim.io
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.thalheim.io:3gANx3+SdDphvMmR6P3dqPZDKcIZC7XxU1n+cXAROaA=
+
+      - name: Build cross-platform binaries
+        run: |
+          echo "Building cross-platform binaries..."
+          nix build .#checks.x86_64-linux.cross-build --log-format bar-with-logs
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          cp result/* release-assets/
+          cd release-assets
+
+          # List what we're uploading
+          echo "Files to upload:"
+          ls -la
+
+      - name: Upload Release Assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd release-assets
+
+          # Upload all binaries and checksums at once
+          gh release upload "${{ github.event.release.tag_name }}" * \
+            --repo "${{ github.repository }}" \
+            --clobber
