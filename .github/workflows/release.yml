@@ -19,9 +19,8 @@ jobs:
         uses: cachix/install-nix-action@v30
         with:
           extra_nix_config: |
-            experimental-features = nix-command flakes
-            substituters = https://cache.nixos.org https://cache.thalheim.io
-            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.thalheim.io:3gANx3+SdDphvMmR6P3dqPZDKcIZC7XxU1n+cXAROaA=
+            extra-substituters = https://cache.thalheim.io
+            extra-trusted-public-keys = cache.thalheim.io-1:R7msbosLEZKrxk/lKxf9BTjOOH7Ax3H0Qj0/6wiHOgc=
 
       - name: Build cross-platform binaries
         run: |
