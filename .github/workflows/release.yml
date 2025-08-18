@@ -1,8 +1,10 @@
 name: Release
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+  push:
+    tags:
+      - "*"
 
 jobs:
   build-and-upload:
@@ -42,7 +44,13 @@ jobs:
         run: |
           cd release-assets
 
+          # Get the tag name from the ref
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+
+          # Create release if it doesn't exist
+          gh release create "$TAG_NAME" --title "$TAG_NAME" --notes "" 2>/dev/null || true
+
           # Upload all binaries and checksums at once
-          gh release upload "${{ github.event.release.tag_name }}" * \
+          gh release upload "$TAG_NAME" * \
             --repo "${{ github.repository }}" \
             --clobber

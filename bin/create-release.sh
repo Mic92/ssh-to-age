@@ -56,4 +56,5 @@ git checkout main
 
 waitForPr "release-${version}"
 git pull --rebase git@github.com:Mic92/ssh-to-age main
-gh release create "${version}" --draft --title "${version}" --notes ""
+git tag -a "${version}" -m "Release ${version}"
+git push origin "refs/tags/${version}"
