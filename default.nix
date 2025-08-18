@@ -4,7 +4,7 @@ let
 in
 pkgs.buildGoModule {
   pname = "ssh-to-age";
-  version = "1.1.11";
+  version = "1.2.0";
 
   src = fs.toSource {
     root = ./.;
