@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {}, vendorHash ? "sha256-oezyqJ+/X1KKzgqVllgeH4r709LKr1zBVv7oLW5iAgc=" }:
+{ pkgs ? import <nixpkgs> {}, vendorHash ? "sha256-aAWyR6f807NXU40Gqfy7567sU89aOIO91xgnQABDs3k=" }:
 let
   fs = pkgs.lib.fileset;
 in
