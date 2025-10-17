@@ -12,9 +12,12 @@ import (
 	sshage "github.com/Mic92/ssh-to-age"
 )
 
+var version = "dev"
+
 type options struct {
-	out, in    string
-	privateKey bool
+	out, in     string
+	privateKey  bool
+	showVersion bool
 }
 
 func parseFlags(args []string) options {
@@ -23,6 +26,7 @@ func parseFlags(args []string) options {
 	f.BoolVar(&opts.privateKey, "private-key", false, "convert private key instead of public key")
 	f.StringVar(&opts.in, "i", "-", "Input path. Reads by default from standard input")
 	f.StringVar(&opts.out, "o", "-", "Output path. Prints by default to standard output")
+	f.BoolVar(&opts.showVersion, "version", false, "show version and exit")
 	if err := f.Parse(args[1:]); err != nil {
 		// should never happen since flag.ExitOnError
 		panic(err)
@@ -41,6 +45,11 @@ func writeKey(writer io.Writer, key *string) error {
 
 func convertKeys(args []string) error {
 	opts := parseFlags(args)
+
+	if opts.showVersion {
+		fmt.Println(version)
+		return nil
+	}
 
 	var sshKey []byte
 	var err error

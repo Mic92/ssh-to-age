@@ -114,3 +114,18 @@ func TestPrivateKeyWithPassphrase(t *testing.T) {
 	_, err = age.ParseX25519Identity(privateKey)
 	ok(t, err)
 }
+
+func TestVersionFlag(t *testing.T) {
+	tempdir := TempDir(t)
+	defer os.RemoveAll(tempdir)
+	out := path.Join(tempdir, "out")
+
+	err := convertKeys([]string{"ssh-to-age", "-version", "-o", out})
+	ok(t, err)
+
+	// Verify that no output file was created when version flag is used
+	_, err = os.Stat(out)
+	if !os.IsNotExist(err) {
+		t.Errorf("output file should not exist when -version flag is used")
+	}
+}
