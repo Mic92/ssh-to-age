@@ -21,6 +21,8 @@ pkgs.buildGoModule {
 
   subPackages = [ "cmd/ssh-to-age" ];
 
+  ldflags = [ "-s" "-w" "-X main.version=${version}" ];
+
   # golangci-lint is marked as broken on macOS
   nativeBuildInputs = pkgs.lib.optional (!pkgs.stdenv.isDarwin) [ pkgs.golangci-lint ];
 

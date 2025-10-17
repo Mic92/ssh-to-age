@@ -12,7 +12,7 @@ import (
 	sshage "github.com/Mic92/ssh-to-age"
 )
 
-const version = "1.2.0"
+var version = "dev"
 
 type options struct {
 	out, in     string
