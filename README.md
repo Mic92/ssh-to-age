@@ -20,6 +20,12 @@ $ read -s SSH_TO_AGE_PASSPHRASE; export SSH_TO_AGE_PASSPHRASE
 $ ssh-to-age -private-key -i $HOME/.ssh/id_ed25519 -o key.txt
 ```
 
+Alternatively, use `systemd-ask-password` and only add the environmental variable for a single command:
+
+```console
+$ SSH_TO_AGE_PASSPHRASE=$(systemd-ask-password) ssh-to-age -private-key -i $HOME/.ssh/id_ed25519 -o key.txt
+```
+
 - Exports the public key:
 
 ```console
