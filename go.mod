@@ -6,7 +6,7 @@ toolchain go1.24.6
 
 require (
 	filippo.io/age v1.3.1
-	filippo.io/edwards25519 v1.1.0
+	filippo.io/edwards25519 v1.2.0
 	golang.org/x/crypto v0.48.0
 )
 
