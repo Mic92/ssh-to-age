@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	UnsupportedKeyType = errors.New("only ed25519 keys are supported")
+	ErrUnsupportedKeyType = errors.New("only ed25519 keys are supported")
 )
 
 func ed25519PrivateKeyToCurve25519(pk ed25519.PrivateKey) ([]byte, error) {
@@ -73,7 +73,7 @@ func SSHPrivateKeyToAge(sshKey, passphrase []byte) (*string, *string, error) {
 
 	ed25519Key, ok := privateKey.(*ed25519.PrivateKey)
 	if !ok {
-		return nil, nil, fmt.Errorf("got %s key type but: %w", reflect.TypeOf(privateKey), UnsupportedKeyType)
+		return nil, nil, fmt.Errorf("got %s key type but: %w", reflect.TypeOf(privateKey), ErrUnsupportedKeyType)
 	}
 
 	pubKey, err := encodePublicKey(ed25519Key.Public())
@@ -106,7 +106,7 @@ func SSHPublicKeyToAge(sshKey []byte) (*string, error) {
 	}
 	// We only care about ed25519
 	if pk.Type() != ssh.KeyAlgoED25519 {
-		return nil, fmt.Errorf("got %s key type, but %w", pk.Type(), UnsupportedKeyType)
+		return nil, fmt.Errorf("got %s key type, but %w", pk.Type(), ErrUnsupportedKeyType)
 	}
 	// Get the bytes
 	cpk, ok := pk.(ssh.CryptoPublicKey)

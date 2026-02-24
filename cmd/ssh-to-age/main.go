@@ -72,7 +72,7 @@ func convertKeys(args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to create %s: %w", opts.out, err)
 		}
-		defer writer.Close()
+		defer writer.Close() //nolint:errcheck
 	}
 	if opts.privateKey {
 		var (
@@ -109,7 +109,7 @@ func convertKeys(args []string) error {
 
 			key, err := sshage.SSHPublicKeyToAge([]byte(k))
 			if err != nil {
-				if errors.Is(err, sshage.UnsupportedKeyType) {
+				if errors.Is(err, sshage.ErrUnsupportedKeyType) {
 					fmt.Fprintf(os.Stderr, "skipped key: %s\n", err)
 					continue
 				}

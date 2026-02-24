@@ -38,7 +38,7 @@ func TempDir(t *testing.T) string {
 
 func TestPublicKey(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-i", Asset("id_ed25519.pub"), "-o", out})
@@ -55,7 +55,7 @@ func TestPublicKey(t *testing.T) {
 
 func TestSshKeyScan(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-i", Asset("keyscan.txt"), "-o", out})
@@ -63,7 +63,7 @@ func TestSshKeyScan(t *testing.T) {
 
 	file, err := os.Open(out)
 	ok(t, err)
-	defer file.Close()
+	defer file.Close() //nolint:errcheck
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -77,7 +77,7 @@ func TestSshKeyScan(t *testing.T) {
 
 func TestPrivateKey(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519"), "-o", out})
@@ -94,13 +94,13 @@ func TestPrivateKey(t *testing.T) {
 
 func TestPrivateKeyWithPassphrase(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	passphrase := "test"
 
-	os.Setenv("SSH_TO_AGE_PASSPHRASE", passphrase)
-	defer os.Unsetenv("SSH_TO_AGE_PASSPHRASE")
+	_ = os.Setenv("SSH_TO_AGE_PASSPHRASE", passphrase)
+	defer os.Unsetenv("SSH_TO_AGE_PASSPHRASE") //nolint:errcheck
 
 	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519_passphrase"), "-o", out})
 	ok(t, err)
@@ -170,7 +170,7 @@ func TestStdinPassphraseRequiresFileInput(t *testing.T) {
 
 func TestVersionFlag(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-version", "-o", out})
