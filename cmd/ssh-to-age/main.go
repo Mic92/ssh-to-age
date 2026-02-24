@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -56,12 +55,12 @@ func convertKeys(args []string) error {
 	var sshKey []byte
 	var err error
 	if opts.in == "-" {
-		sshKey, err = ioutil.ReadAll(os.Stdin)
+		sshKey, err = io.ReadAll(os.Stdin)
 		if err != nil {
 			return fmt.Errorf("error reading stdin: %w", err)
 		}
 	} else {
-		sshKey, err = ioutil.ReadFile(opts.in)
+		sshKey, err = os.ReadFile(opts.in)
 		if err != nil {
 			return fmt.Errorf("error reading %s: %w", opts.in, err)
 		}
@@ -86,7 +85,7 @@ func convertKeys(args []string) error {
 			if opts.in == "-" {
 				return fmt.Errorf("cannot read both private key and passphrase from stdin")
 			}
-			passphrase, err := ioutil.ReadAll(os.Stdin)
+			passphrase, err := io.ReadAll(os.Stdin)
 			if err != nil {
 				return fmt.Errorf("error reading passphrase from stdin: %w", err)
 			}

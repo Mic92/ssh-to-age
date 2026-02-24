@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -32,7 +31,7 @@ func Asset(name string) string {
 }
 
 func TempDir(t *testing.T) string {
-	tempdir, err := ioutil.TempDir(os.TempDir(), "testdir")
+	tempdir, err := os.MkdirTemp(os.TempDir(), "testdir")
 	ok(t, err)
 	return tempdir
 }
@@ -45,7 +44,7 @@ func TestPublicKey(t *testing.T) {
 	err := convertKeys([]string{"ssh-to-age", "-i", Asset("id_ed25519.pub"), "-o", out})
 	ok(t, err)
 
-	rawPublicKey, err := ioutil.ReadFile(out)
+	rawPublicKey, err := os.ReadFile(out)
 	ok(t, err)
 	pubKey := strings.TrimSuffix(string(rawPublicKey), "\n")
 
@@ -84,7 +83,7 @@ func TestPrivateKey(t *testing.T) {
 	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519"), "-o", out})
 	ok(t, err)
 
-	rawPrivateKey, err := ioutil.ReadFile(out)
+	rawPrivateKey, err := os.ReadFile(out)
 	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
 	ok(t, err)
 
@@ -106,7 +105,7 @@ func TestPrivateKeyWithPassphrase(t *testing.T) {
 	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519_passphrase"), "-o", out})
 	ok(t, err)
 
-	rawPrivateKey, err := ioutil.ReadFile(out)
+	rawPrivateKey, err := os.ReadFile(out)
 	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
 	ok(t, err)
 
@@ -139,7 +138,7 @@ func TestPrivateKeyWithStdinPassphrase(t *testing.T) {
 	err = convertKeys([]string{"ssh-to-age", "-private-key", "-stdinpass", "-i", Asset("id_ed25519_passphrase"), "-o", out})
 	ok(t, err)
 
-	rawPrivateKey, err := ioutil.ReadFile(out)
+	rawPrivateKey, err := os.ReadFile(out)
 	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
 	ok(t, err)
 
