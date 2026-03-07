@@ -115,6 +115,60 @@ func TestPrivateKeyWithPassphrase(t *testing.T) {
 	ok(t, err)
 }
 
+func TestPrivateKeyWithStdinPassphrase(t *testing.T) {
+	tempdir := TempDir(t)
+	defer os.RemoveAll(tempdir)
+	out := path.Join(tempdir, "out")
+
+	stdin, err := os.CreateTemp(tempdir, "stdin")
+	ok(t, err)
+	defer stdin.Close()
+
+	_, err = stdin.WriteString("test\n")
+	ok(t, err)
+
+	_, err = stdin.Seek(0, 0)
+	ok(t, err)
+
+	oldStdin := os.Stdin
+	os.Stdin = stdin
+	defer func() {
+		os.Stdin = oldStdin
+	}()
+
+	err = convertKeys([]string{"ssh-to-age", "-private-key", "-stdinpass", "-i", Asset("id_ed25519_passphrase"), "-o", out})
+	ok(t, err)
+
+	rawPrivateKey, err := ioutil.ReadFile(out)
+	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
+	ok(t, err)
+
+	fmt.Printf("private key: %s\n", privateKey)
+	_, err = age.ParseX25519Identity(privateKey)
+	ok(t, err)
+}
+
+func TestStdinPassphraseRequiresFileInput(t *testing.T) {
+	stdin, err := os.CreateTemp(os.TempDir(), "stdin")
+	ok(t, err)
+	defer os.Remove(stdin.Name())
+	defer stdin.Close()
+
+	oldStdin := os.Stdin
+	os.Stdin = stdin
+	defer func() {
+		os.Stdin = oldStdin
+	}()
+
+	err = convertKeys([]string{"ssh-to-age", "-private-key", "-stdinpass"})
+	if err == nil {
+		t.Fatal("expected error when reading both private key and passphrase from stdin")
+	}
+	if got, want := err.Error(), "cannot read both private key and passphrase from stdin"; got != want {
+		t.Fatalf("unexpected error: got %q, want %q", got, want)
+	}
+}
+
 func TestVersionFlag(t *testing.T) {
 	tempdir := TempDir(t)
 	defer os.RemoveAll(tempdir)

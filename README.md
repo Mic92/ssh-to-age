@@ -1,4 +1,5 @@
 # ssh-to-age
+
 Convert SSH Ed25519 keys to [age](https://github.com/FiloSottile/age) keys.
 This is useful for usage in [sops-nix](https://github.com/Mic92/sops-nix) and
 [sops](https://github.com/mozilla/sops)
@@ -13,18 +14,14 @@ $ cat key.txt
  AGE-SECRET-KEY-1K3VN4N03PTHJWSJSCCMQCN33RY5FSKQPJ4KRRTG3JMQUYE0TUSEQEDH6V8
 ```
 
-If you private key is encrypted, you can export the password in `SSH_TO_AGE_PASSPHRASE`
-
-``` console
-$ read -s SSH_TO_AGE_PASSPHRASE; export SSH_TO_AGE_PASSPHRASE
-$ ssh-to-age -private-key -i $HOME/.ssh/id_ed25519 -o key.txt
-```
-
-Alternatively, use `systemd-ask-password` and only add the environmental variable for a single command:
+If your private key is encrypted, pipe the passphrase via `-stdinpass`:
 
 ```console
-$ SSH_TO_AGE_PASSPHRASE=$(systemd-ask-password) ssh-to-age -private-key -i $HOME/.ssh/id_ed25519 -o key.txt
+$ systemd-ask-password | ssh-to-age -private-key -stdinpass -i $HOME/.ssh/id_ed25519 -o key.txt
+$ security find-generic-password -w -s 'SSH Key Passphrase' | ssh-to-age -private-key -stdinpass -i $HOME/.ssh/id_ed25519 -o key.txt
 ```
+
+Alternatively, pass it via `SSH_TO_AGE_PASSPHRASE` environment variable.
 
 - Exports the public key:
 

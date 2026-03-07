@@ -17,6 +17,7 @@ var version = "dev"
 type options struct {
 	out, in     string
 	privateKey  bool
+	stdinPass   bool
 	showVersion bool
 }
 
@@ -26,6 +27,7 @@ func parseFlags(args []string) options {
 	f.BoolVar(&opts.privateKey, "private-key", false, "convert private key instead of public key")
 	f.StringVar(&opts.in, "i", "-", "Input path. Reads by default from standard input")
 	f.StringVar(&opts.out, "o", "-", "Output path. Prints by default to standard output")
+	f.BoolVar(&opts.stdinPass, "stdinpass", false, "read private key passphrase from standard input")
 	f.BoolVar(&opts.showVersion, "version", false, "show version and exit")
 	if err := f.Parse(args[1:]); err != nil {
 		// should never happen since flag.ExitOnError
@@ -80,6 +82,16 @@ func convertKeys(args []string) error {
 		)
 
 		keyPassphrase := os.Getenv("SSH_TO_AGE_PASSPHRASE")
+		if opts.stdinPass {
+			if opts.in == "-" {
+				return fmt.Errorf("cannot read both private key and passphrase from stdin")
+			}
+			passphrase, err := ioutil.ReadAll(os.Stdin)
+			if err != nil {
+				return fmt.Errorf("error reading passphrase from stdin: %w", err)
+			}
+			keyPassphrase = strings.TrimRight(string(passphrase), "\r\n")
+		}
 
 		key, _, err = sshage.SSHPrivateKeyToAge(sshKey, []byte(keyPassphrase))
 		if err != nil {
