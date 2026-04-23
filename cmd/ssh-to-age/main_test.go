@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -32,20 +31,20 @@ func Asset(name string) string {
 }
 
 func TempDir(t *testing.T) string {
-	tempdir, err := ioutil.TempDir(os.TempDir(), "testdir")
+	tempdir, err := os.MkdirTemp(os.TempDir(), "testdir")
 	ok(t, err)
 	return tempdir
 }
 
 func TestPublicKey(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-i", Asset("id_ed25519.pub"), "-o", out})
 	ok(t, err)
 
-	rawPublicKey, err := ioutil.ReadFile(out)
+	rawPublicKey, err := os.ReadFile(out)
 	ok(t, err)
 	pubKey := strings.TrimSuffix(string(rawPublicKey), "\n")
 
@@ -56,7 +55,7 @@ func TestPublicKey(t *testing.T) {
 
 func TestSshKeyScan(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-i", Asset("keyscan.txt"), "-o", out})
@@ -64,7 +63,7 @@ func TestSshKeyScan(t *testing.T) {
 
 	file, err := os.Open(out)
 	ok(t, err)
-	defer file.Close()
+	defer file.Close() //nolint:errcheck
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -78,13 +77,13 @@ func TestSshKeyScan(t *testing.T) {
 
 func TestPrivateKey(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519"), "-o", out})
 	ok(t, err)
 
-	rawPrivateKey, err := ioutil.ReadFile(out)
+	rawPrivateKey, err := os.ReadFile(out)
 	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
 	ok(t, err)
 
@@ -95,18 +94,18 @@ func TestPrivateKey(t *testing.T) {
 
 func TestPrivateKeyWithPassphrase(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	passphrase := "test"
 
-	os.Setenv("SSH_TO_AGE_PASSPHRASE", passphrase)
-	defer os.Unsetenv("SSH_TO_AGE_PASSPHRASE")
+	_ = os.Setenv("SSH_TO_AGE_PASSPHRASE", passphrase)
+	defer os.Unsetenv("SSH_TO_AGE_PASSPHRASE") //nolint:errcheck
 
 	err := convertKeys([]string{"ssh-to-age", "-private-key", "-i", Asset("id_ed25519_passphrase"), "-o", out})
 	ok(t, err)
 
-	rawPrivateKey, err := ioutil.ReadFile(out)
+	rawPrivateKey, err := os.ReadFile(out)
 	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
 	ok(t, err)
 
@@ -139,7 +138,7 @@ func TestPrivateKeyWithStdinPassphrase(t *testing.T) {
 	err = convertKeys([]string{"ssh-to-age", "-private-key", "-stdinpass", "-i", Asset("id_ed25519_passphrase"), "-o", out})
 	ok(t, err)
 
-	rawPrivateKey, err := ioutil.ReadFile(out)
+	rawPrivateKey, err := os.ReadFile(out)
 	privateKey := strings.TrimSuffix(string(rawPrivateKey), "\n")
 	ok(t, err)
 
@@ -171,7 +170,7 @@ func TestStdinPassphraseRequiresFileInput(t *testing.T) {
 
 func TestVersionFlag(t *testing.T) {
 	tempdir := TempDir(t)
-	defer os.RemoveAll(tempdir)
+	defer os.RemoveAll(tempdir) //nolint:errcheck
 	out := path.Join(tempdir, "out")
 
 	err := convertKeys([]string{"ssh-to-age", "-version", "-o", out})
