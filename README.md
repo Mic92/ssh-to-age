@@ -23,6 +23,21 @@ $ security find-generic-password -w -s 'SSH Key Passphrase' | ssh-to-age -privat
 
 Alternatively, pass it via `SSH_TO_AGE_PASSPHRASE` environment variable.
 
+> [!NOTE]
+> Go's `golang.org/x/crypto/ssh` can only decrypt OpenSSH private keys that
+> use the `aes256-ctr` or `aes256-cbc` cipher. If your key was generated with
+> `ssh-keygen -Z chacha20-poly1305@openssh.com` (or `aes*-gcm@openssh.com`),
+> `ssh-to-age` will fail with `unknown cipher` / `parse error in message type 0`.
+> Re-encrypt a copy of the key with a supported cipher (the Ed25519 key
+> material and thus the resulting age key stay identical):
+>
+> ```console
+> $ install -m600 $HOME/.ssh/id_ed25519 /tmp/id_ed25519
+> $ ssh-keygen -p -f /tmp/id_ed25519 -Z aes256-ctr
+> $ ssh-to-age -private-key -i /tmp/id_ed25519 -o key.txt
+> $ rm /tmp/id_ed25519
+> ```
+
 - Exports the public key:
 
 ```console
