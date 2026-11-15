@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {}, vendorHash ? "sha256-TBKZAy4Xlr6rX10H8+uPMb2rwp/MHFK8psaKcT2IM/8=" }:
+{ pkgs ? import <nixpkgs> {}, vendorHash ? "sha256-skCEEryurcdYBIdyx7docIfgEDZZQ0Lg61VSDiCRzkU=" }:
 let
   fs = pkgs.lib.fileset;
   version = "1.3.0";
